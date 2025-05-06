@@ -1,11 +1,30 @@
 import { Model, model, Schema } from "mongoose";
-import { IItineary } from "../types/models/itineararies.type";
+import { IActivity, IItineary } from "../types/models/itineararies.type";
 
-const schema = new Schema<IItineary>({}, { timestamps: true });
+const activitySchema = new Schema<IActivity>(
+  {
+    time: { type: Date, required: true },
+    description: { type: String, required: true },
+    location: { type: String, required: true },
+  },
+  { _id: false }
+);
 
-const UsersRepository = model<IItineary, Model<IItineary>>(
+const schema = new Schema<IItineary>(
+  {
+    title: { type: String, required: true },
+    destination: { type: String, required: true },
+    startDate: { type: Date, required: true },
+    endDate: { type: Date, required: true },
+    userId: { type: Schema.Types.ObjectId, ref: "User", required: true },
+    activities: [activitySchema],
+  },
+  { timestamps: true }
+);
+
+const ItineraryModel = model<IItineary, Model<IItineary>>(
   "Itineary",
   schema,
   "itineraries"
 );
-export default UsersRepository;
+export default ItineraryModel;

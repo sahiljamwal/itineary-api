@@ -1,14 +1,16 @@
+import { Types } from "mongoose";
+
 export interface IItineary {
-  userId: string;
+  userId: Types.ObjectId;
   title: string;
   destination: string;
-  startDate: string;
-  endDate: string;
+  startDate: Date;
+  endDate: Date;
   activities: IActivity[];
 }
 
 export interface IActivity {
-  time: string;
+  time: Date;
   description: string;
   location: string;
 }

@@ -14,5 +14,5 @@ const schema = new Schema<IUser>(
   { timestamps: true }
 );
 
-const UsersRepository = model<IUser, Model<IUser>>("User", schema, "users");
-export default UsersRepository;
+const UserModel = model<IUser, Model<IUser>>("User", schema, "users");
+export default UserModel;
