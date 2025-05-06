@@ -5,6 +5,7 @@ import helmet from "helmet";
 import compression from "compression";
 import apiRouter from "./routes";
 import { errorHandler } from "./common/middlewares/error-handler.middleware";
+import { morganStream } from "./common/utils/logger.util";
 
 const app = express();
 
@@ -20,17 +21,20 @@ app.use(json());
 app.use(urlencoded({ extended: false }));
 
 app.use(
-  morgan((tokens, req, res) => {
-    return [
-      tokens.method(req, res),
-      tokens.url(req, res),
-      tokens.status(req, res),
-      tokens.res(req, res, "content-length"),
-      "-",
-      tokens["response-time"](req, res),
-      "ms",
-    ].join(" ");
-  })
+  morgan(
+    (tokens, req, res) => {
+      return [
+        tokens.method(req, res),
+        tokens.url(req, res),
+        tokens.status(req, res),
+        tokens.res(req, res, "content-length"),
+        "-",
+        tokens["response-time"](req, res),
+        "ms",
+      ].join(" ");
+    },
+    { stream: morganStream }
+  )
 );
 
 // API entrypoint
