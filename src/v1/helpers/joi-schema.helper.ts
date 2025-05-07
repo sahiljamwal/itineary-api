@@ -1,5 +1,34 @@
-import Joi from "joi";
+import Joi, { CustomHelpers } from "joi";
 import { IRegisterUserPayload, ILoginUserPayload } from "../types/auth.type";
+import { ICreateItinearyPayload, IFetchItineary } from "../types/itineary.type";
+import { Types } from "mongoose";
+
+// Custom validators
+function validateActivitiesWithinDateRange(
+  activities: any,
+  helpers: Joi.CustomHelpers
+) {
+  const { startDate, endDate } = helpers.state.ancestors[0];
+
+  for (const activity of activities) {
+    if (!(activity.time >= startDate && activity.time <= endDate)) {
+      return helpers.error("any.invalid", {
+        message: `Activity time "${activity.time}" must be between startDate "${startDate}" and endDate "${endDate}"`,
+      });
+    }
+  }
+
+  return activities;
+}
+
+function validateObjectId(value: string, helpers: CustomHelpers) {
+  if (!Types.ObjectId.isValid(value)) {
+    return helpers.error("any.invalid");
+  }
+  return value;
+}
+
+// Schema
 
 const userRegisterSchema = Joi.object<IRegisterUserPayload>().keys({
   email: Joi.string().email().required().trim().label("email"),
@@ -22,4 +51,36 @@ const userLoginSchema = Joi.object<ILoginUserPayload>().keys({
 export const userAuthSchema = {
   register: userRegisterSchema,
   login: userLoginSchema,
+};
+
+const activitySchema = Joi.object({
+  time: Joi.date().required().label("Activity time"),
+  description: Joi.string().trim().required().label("Activity description"),
+  location: Joi.string().trim().required().label("Activity location"),
+});
+
+const createItinearySchema = Joi.object<ICreateItinearyPayload>().keys({
+  title: Joi.string().trim().required().label("title"),
+  destination: Joi.string().trim().required().label("destination"),
+  startDate: Joi.date().required().label("Start Date"),
+  endDate: Joi.date()
+    .greater(Joi.ref("startDate"))
+    .required()
+    .label("End Date"),
+  activities: Joi.array()
+    .items(activitySchema)
+    .custom(validateActivitiesWithinDateRange, "Validate activity times")
+    .required()
+    .label("Activities"),
+});
+
+const itinearyParamsSchema = Joi.object<IFetchItineary["params"]>().keys({
+  id: Joi.string().required().custom(validateObjectId).label("id"),
+});
+
+export const itinearySchema = {
+  create: createItinearySchema,
+  find: { itinearyParamsSchema },
+  update: { itinearyParamsSchema },
+  delete: { itinearyParamsSchema },
 };

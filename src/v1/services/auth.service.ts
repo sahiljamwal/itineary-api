@@ -49,6 +49,14 @@ class AuthService {
       return this._handleError(error as Error);
     }
   };
+
+  public findUser = async (userId: string) => {
+    try {
+      return await this._model.findOne({ _id: userId }).lean();
+    } catch (error) {
+      return this._handleError(error as Error);
+    }
+  };
 }
 
 export default new AuthService();

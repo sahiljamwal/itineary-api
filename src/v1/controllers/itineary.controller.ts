@@ -5,12 +5,12 @@ class ItinearyController {
   constructor(private _service = itinearyService) {}
 
   public create = async (
-    _request: Request,
+    request: Request,
     response: Response,
     next: NextFunction
   ) => {
     try {
-      const data = await this._service.create();
+      const data = await this._service.create(request.body, request.user);
       return response.status(201).send(data);
     } catch (error) {
       return next(error);
@@ -18,12 +18,12 @@ class ItinearyController {
   };
 
   public get = async (
-    _request: Request,
+    request: Request,
     response: Response,
     next: NextFunction
   ) => {
     try {
-      const data = await this._service.get();
+      const data = await this._service.get(request.user);
       return response.status(200).send(data);
     } catch (error) {
       return next(error);
@@ -31,12 +31,12 @@ class ItinearyController {
   };
 
   public getById = async (
-    _request: Request,
+    request: Request,
     response: Response,
     next: NextFunction
   ) => {
     try {
-      const data = await this._service.getById();
+      const data = await this._service.getById(request.params.id, request.user);
       return response.status(200).send(data);
     } catch (error) {
       return next(error);
@@ -44,12 +44,16 @@ class ItinearyController {
   };
 
   public update = async (
-    _request: Request,
+    request: Request,
     response: Response,
     next: NextFunction
   ) => {
     try {
-      const data = await this._service.update();
+      const data = await this._service.update(
+        request.params.id,
+        request.body,
+        request.user
+      );
       return response.status(200).send(data);
     } catch (error) {
       return next(error);
@@ -57,12 +61,12 @@ class ItinearyController {
   };
 
   public delete = async (
-    _request: Request,
+    request: Request,
     response: Response,
     next: NextFunction
   ) => {
     try {
-      await this._service.delete();
+      await this._service.delete(request.params.id, request.user);
       return response.sendStatus(200);
     } catch (error) {
       return next(error);
