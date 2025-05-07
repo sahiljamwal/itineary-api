@@ -10,7 +10,7 @@ export const errorHandler = async (
   response: Response,
   _next: NextFunction
 ) => {
-  logger.error({ error });
+  logger.error({ error, message: error.message, stack: error.stack });
 
   const statusCode = error.httpStatusCode || 500;
   const detail = error.isOperational

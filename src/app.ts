@@ -6,6 +6,7 @@ import compression from "compression";
 import apiRouter from "./routes";
 import { errorHandler } from "./common/middlewares/error-handler.middleware";
 import { morganStream } from "./common/utils/logger.util";
+import { rateLimit } from "express-rate-limit";
 
 const app = express();
 
@@ -19,6 +20,14 @@ app.use(
 app.use(cors());
 app.use(json());
 app.use(urlencoded({ extended: false }));
+app.use(
+  rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    limit: 100, // Limit each IP to 100 requests per `window` (here, per 15 minutes).
+    standardHeaders: "draft-8",
+    legacyHeaders: false,
+  })
+);
 
 app.use(
   morgan(

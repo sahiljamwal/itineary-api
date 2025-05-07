@@ -14,7 +14,8 @@
       "envFile": "${workspaceFolder}/.env",
       "runtimeExecutable": "node",
       "runtimeArgs": ["-r", "ts-node/register"],
-      "console": "integratedTerminal"
+      "console": "integratedTerminal",
+      "restart": true
     }
   ]
 }
