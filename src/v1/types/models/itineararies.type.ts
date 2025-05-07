@@ -8,10 +8,17 @@ export interface IItineary {
   startDate: Date;
   endDate: Date;
   activities: IActivity[];
+  shareable?: IShareable;
 }
 
 export interface IActivity {
   time: Date;
   description: string;
   location: string;
+}
+
+export interface IShareable {
+  id: Types.ObjectId;
+  createdAt: Date;
+  visits: number;
 }

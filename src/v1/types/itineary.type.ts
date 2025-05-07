@@ -13,3 +13,7 @@ export type IFetchItineary = {
     filter: { destination: string };
   };
 };
+
+export type IFetchShareableItineary = {
+  params: { shareableId: string };
+};

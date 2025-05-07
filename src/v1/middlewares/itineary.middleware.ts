@@ -76,3 +76,21 @@ export const getCachedRecord = (
     return next(error);
   }
 };
+
+export const validateShareableItinearyId = async (
+  request: Request,
+  _response: Response,
+  next: NextFunction
+) => {
+  try {
+    request.params = await itinearySchema["share"][
+      "shareableItinearyParamsSchema"
+    ].validateAsync(request.params, {
+      errors: { wrap: { label: "" } },
+    });
+
+    return next();
+  } catch (error) {
+    return next(new ValidationError((error as Error).message));
+  }
+};

@@ -137,6 +137,52 @@ class ItinearyService {
       throw new AuthorizationError(EC.UNAUTHORIZED_ACCESS);
     }
   };
+
+  public getShareableLink = async (itinearyId: string, user: IUser) => {
+    try {
+      const { _id: userId } = user;
+
+      const itineary = await this._model.findOne({ _id: itinearyId }).lean();
+
+      this.checkItineary(itineary as IItineary, userId);
+
+      if (itineary?.shareable?.id) {
+        return itineary.shareable.id;
+      }
+      const updatedDoc = await this._model.findOneAndUpdate(
+        { _id: itinearyId },
+        { $set: { shareable: { id: new Types.ObjectId() } } },
+        { new: true }
+      );
+
+      return updatedDoc?.shareable?.id;
+    } catch (error) {
+      return this._handleError(error as Error);
+    }
+  };
+
+  public visitShareableLink = async (shareableItinearyId: string) => {
+    try {
+      const itineary = await this._model
+        .findOneAndUpdate(
+          { "shareable.id": shareableItinearyId },
+          { $inc: { "shareable.visits": 1 } },
+          {
+            projection: { __v: 0, userId: 0, shareable: 0 },
+            new: true,
+          }
+        )
+        .lean();
+
+      if (!itineary) {
+        throw new NotFoundError(EC.ITINEARY_NOT_FOUND);
+      }
+
+      return itineary;
+    } catch (error) {
+      return this._handleError(error as Error);
+    }
+  };
 }
 
 export default new ItinearyService();

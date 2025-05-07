@@ -1,6 +1,10 @@
 import Joi, { CustomHelpers } from "joi";
 import { IRegisterUserPayload, ILoginUserPayload } from "../types/auth.type";
-import { ICreateItinearyPayload, IFetchItineary } from "../types/itineary.type";
+import {
+  ICreateItinearyPayload,
+  IFetchItineary,
+  IFetchShareableItineary,
+} from "../types/itineary.type";
 import { Types } from "mongoose";
 
 // Custom validators
@@ -99,9 +103,19 @@ const itinearyQuerySchema = Joi.object<IFetchItineary["query"]>().keys({
     .label("sort"),
 });
 
+const shareableItinearyParamsSchema = Joi.object<
+  IFetchShareableItineary["params"]
+>().keys({
+  shareableId: Joi.string()
+    .required()
+    .custom(validateObjectId)
+    .label("shareableId"),
+});
+
 export const itinearySchema = {
   create: createItinearySchema,
   find: { itinearyParamsSchema, itinearyQuerySchema },
   update: { itinearyParamsSchema },
   delete: { itinearyParamsSchema },
+  share: { shareableItinearyParamsSchema },
 };

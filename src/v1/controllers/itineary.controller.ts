@@ -73,6 +73,39 @@ class ItinearyController {
       return next(error);
     }
   };
+
+  public getShareableLink = async (
+    request: Request,
+    response: Response,
+    next: NextFunction
+  ) => {
+    try {
+      const id = await this._service.getShareableLink(
+        request.params.id,
+        request.user
+      );
+      return response.status(200).json({
+        link: `${request.protocol}://${request.hostname}${request.baseUrl}/share/${id}`,
+      });
+    } catch (error) {
+      return next(error);
+    }
+  };
+
+  public visitShareableLink = async (
+    request: Request,
+    response: Response,
+    next: NextFunction
+  ) => {
+    try {
+      const data = await this._service.visitShareableLink(
+        request.params.shareableId
+      );
+      return response.status(200).send(data);
+    } catch (error) {
+      return next(error);
+    }
+  };
 }
 
 export default new ItinearyController();
