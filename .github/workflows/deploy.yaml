@@ -8,6 +8,10 @@ on:
     branches:
       - main
 
+permissions:
+  id-token: write # This is the important permission for OIDC
+  contents: read # Standard read permission for the repo contents
+
 jobs:
   deploy:
     name: Deploy to Cloud Run
