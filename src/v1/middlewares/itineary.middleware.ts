@@ -2,6 +2,10 @@ import { NextFunction, Request, Response } from "express";
 import { itinearySchema } from "../helpers/joi-schema.helper";
 import { ValidationError } from "../../common/errors/custom.error";
 import { IFetchItineary } from "../types/itineary.type";
+import configuration from "../configurations/config";
+import cache from "../../common/utils/cache.util";
+import { IItineary } from "../types/models/itineararies.type";
+import itinearyService from "../services/itineary.service";
 
 export const validateItineary = async (
   request: Request,
@@ -52,5 +56,23 @@ export const validateItinearyPaginationReq = async (
     return next();
   } catch (error) {
     return next(new ValidationError((error as Error).message));
+  }
+};
+
+export const getCachedRecord = (
+  request: Request,
+  response: Response,
+  next: NextFunction
+) => {
+  try {
+    const cacheKey = `${configuration.env}:${request.user._id}:itineararies:${request.params.id}`;
+    const itineary = cache.get<IItineary>(cacheKey);
+    if (itineary) {
+      itinearyService.checkItineary(itineary, request.user._id);
+      return response.status(200).send(itineary);
+    }
+    return next();
+  } catch (error) {
+    return next(error);
   }
 };

@@ -14,3 +14,7 @@ export enum Role {
 export enum PaginationqueryCodes {
   ITINEARARIES_PAGINATION = "ITINEARARIES_PAGINATION",
 }
+
+export enum TTL {
+  FIVE_MINUTES = 5 * 60,
+}

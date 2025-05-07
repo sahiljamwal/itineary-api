@@ -15,9 +15,11 @@ import {
 import { IItineary } from "../types/models/itineararies.type";
 import { IUser } from "../types/models/user.type";
 import { getPaginationQuery } from "../helpers/query.helper";
-import { PaginationqueryCodes } from "../../common/constants/enums";
+import { PaginationqueryCodes, TTL } from "../../common/constants/enums";
 import { cloneDeep } from "lodash";
 import { IPaginationResponse } from "../types/pagination.type";
+import cache from "../../common/utils/cache.util";
+import configuration from "../configurations/config";
 
 class ItinearyService {
   constructor(private _model = ItineraryModel) {}
@@ -76,7 +78,10 @@ class ItinearyService {
         .findOne({ _id: itinearyId }, { __v: 0 })
         .lean();
 
-      this._checkItineary(itineary as IItineary, userId);
+      this.checkItineary(itineary as IItineary, userId);
+
+      const cacheKey = `${configuration.env}:${userId}:itineararies:${itinearyId}`;
+      cache.set(cacheKey, itineary, TTL.FIVE_MINUTES);
 
       return itineary;
     } catch (error) {
@@ -94,7 +99,7 @@ class ItinearyService {
 
       const itineary = await this._model.findOne({ _id: itinearyId }).lean();
 
-      this._checkItineary(itineary as IItineary, userId);
+      this.checkItineary(itineary as IItineary, userId);
 
       await this._model.findOneAndUpdate(
         { _id: itinearyId },
@@ -113,7 +118,7 @@ class ItinearyService {
 
       const itineary = await this._model.findOne({ _id: itinearyId }).lean();
 
-      this._checkItineary(itineary as IItineary, userId);
+      this.checkItineary(itineary as IItineary, userId);
 
       await this._model.deleteOne({ _id: itinearyId });
 
@@ -123,7 +128,7 @@ class ItinearyService {
     }
   };
 
-  private _checkItineary = (itineary: IItineary, userId: Types.ObjectId) => {
+  public checkItineary = (itineary: IItineary, userId: Types.ObjectId) => {
     if (!itineary) {
       throw new NotFoundError(EC.ITINEARY_NOT_FOUND);
     }
