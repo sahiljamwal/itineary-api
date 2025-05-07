@@ -52,6 +52,6 @@ jobs:
           gcloud run deploy ${{ secrets.GCP_APP_NAME }} \
             --image="$IMAGE_NAME" \
             --region=${{ secrets.GCP_REGION }} \
-            --platform-managed \
+            --platform managed \
             --allow-unauthenticated \
             --quiet
