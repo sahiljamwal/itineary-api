@@ -10,3 +10,7 @@ export enum Role {
   USER = "user",
   ADMIN = "admin",
 }
+
+export enum PaginationqueryCodes {
+  ITINEARARIES_PAGINATION = "ITINEARARIES_PAGINATION",
+}

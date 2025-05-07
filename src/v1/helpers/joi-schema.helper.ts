@@ -78,9 +78,30 @@ const itinearyParamsSchema = Joi.object<IFetchItineary["params"]>().keys({
   id: Joi.string().required().custom(validateObjectId).label("id"),
 });
 
+const itinearyQuerySchema = Joi.object<IFetchItineary["query"]>().keys({
+  page: Joi.number().optional().default(1).label("page"),
+  limit: Joi.number().optional().default(10).label("limit"),
+  filter: Joi.object<IFetchItineary["query"]["filter"]>()
+    .keys({
+      destination: Joi.string().optional().label("destination"),
+    })
+    .optional()
+    .default({})
+    .label("filter"),
+  sort: Joi.object<IFetchItineary["query"]["sort"]>()
+    .keys({
+      createdAt: Joi.number().valid(1, -1).optional().label("createdAt"),
+      startDate: Joi.number().valid(1, -1).optional().label("startDate"),
+      title: Joi.number().valid(1, -1).optional().label("title"),
+    })
+    .optional()
+    .default({ createdAt: -1 })
+    .label("sort"),
+});
+
 export const itinearySchema = {
   create: createItinearySchema,
-  find: { itinearyParamsSchema },
+  find: { itinearyParamsSchema, itinearyQuerySchema },
   update: { itinearyParamsSchema },
   delete: { itinearyParamsSchema },
 };

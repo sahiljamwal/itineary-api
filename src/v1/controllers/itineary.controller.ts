@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import itinearyService from "../services/itineary.service";
+import { IFetchItineary } from "../types/itineary.type";
 
 class ItinearyController {
   constructor(private _service = itinearyService) {}
@@ -18,12 +19,12 @@ class ItinearyController {
   };
 
   public get = async (
-    request: Request,
+    request: Request<any, any, any, IFetchItineary["query"]>,
     response: Response,
     next: NextFunction
   ) => {
     try {
-      const data = await this._service.get(request.user);
+      const data = await this._service.get(request.query, request.user);
       return response.status(200).send(data);
     } catch (error) {
       return next(error);

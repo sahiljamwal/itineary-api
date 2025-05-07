@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import {
+  AuthenticationError,
   NotFoundError,
   ValidationError,
 } from "../../common/errors/custom.error";
@@ -7,6 +8,7 @@ import { userAuthSchema } from "../helpers/joi-schema.helper";
 import jwtUtil, { JwtPayload } from "../../common/utils/jwt.util";
 import authService from "../services/auth.service";
 import { EC } from "../../common/constants/errors";
+import { TokenExpiredError } from "jsonwebtoken";
 
 export const validateUserRegisteration = async (
   request: Request,
@@ -64,6 +66,9 @@ export const validateUser = async (
 
     return next();
   } catch (error) {
+    if (error instanceof TokenExpiredError) {
+      return next(new AuthenticationError(error.message));
+    }
     return next(error);
   }
 };

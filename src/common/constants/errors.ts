@@ -5,4 +5,6 @@ export const EC = {
   UNAUTHORIZED_ACCESS: "user not authorized, operation not allowed",
   AUTH_TOKEN_IS_REQUIRED: "Authorization token is required",
   INVALID_USER: "Invalid user",
+  UNSUPPORTED_PAGINATION_QUERY_CODE_PROVIDED:
+    "Unsupported Pagination query code provided",
 };

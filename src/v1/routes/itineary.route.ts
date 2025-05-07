@@ -3,6 +3,7 @@ import itenaryController from "../controllers/itineary.controller";
 import {
   validateItineary,
   validateItinearyId,
+  validateItinearyPaginationReq,
 } from "../middlewares/itineary.middleware";
 import { validateUser } from "../middlewares/auth.middleware";
 
@@ -10,7 +11,7 @@ const itinearyRouter = express.Router();
 
 itinearyRouter.use(validateUser);
 itinearyRouter.post("/", validateItineary, itenaryController.create);
-itinearyRouter.get("/", itenaryController.get);
+itinearyRouter.get("/", validateItinearyPaginationReq, itenaryController.get);
 itinearyRouter.get("/:id", validateItinearyId, itenaryController.getById);
 itinearyRouter.put(
   "/:id",

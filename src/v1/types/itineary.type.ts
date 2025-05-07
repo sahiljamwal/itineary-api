@@ -6,5 +6,10 @@ export interface IUpdateItinearyPayload extends ICreateItinearyPayload {}
 
 export type IFetchItineary = {
   params: { id: string };
-  query: {};
+  query: {
+    page: number;
+    limit: number;
+    sort: { createdAt: 1 | -1; startDate: 1 | -1; title: 1 | -1 };
+    filter: { destination: string };
+  };
 };

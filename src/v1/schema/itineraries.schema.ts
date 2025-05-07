@@ -22,6 +22,16 @@ const schema = new Schema<IItineary>(
   { timestamps: true }
 );
 
+schema.index({ userId: 1, createdAt: -1 });
+schema.index({ destination: 1 }, { collation: { locale: "en", strength: 2 } });
+schema.index({
+  userId: 1,
+  destination: 1,
+  createdAt: -1,
+  startDate: -1,
+  title: -1,
+});
+
 const ItineraryModel = model<IItineary, Model<IItineary>>(
   "Itineary",
   schema,

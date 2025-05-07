@@ -9,11 +9,15 @@ import {
 import ItineraryModel from "../schema/itineraries.schema";
 import {
   ICreateItinearyPayload,
+  IFetchItineary,
   IUpdateItinearyPayload,
 } from "../types/itineary.type";
 import { IItineary } from "../types/models/itineararies.type";
 import { IUser } from "../types/models/user.type";
-import { omit } from "lodash";
+import { getPaginationQuery } from "../helpers/query.helper";
+import { PaginationqueryCodes } from "../../common/constants/enums";
+import { cloneDeep } from "lodash";
+import { IPaginationResponse } from "../types/pagination.type";
 
 class ItinearyService {
   constructor(private _model = ItineraryModel) {}
@@ -35,15 +39,30 @@ class ItinearyService {
     }
   };
 
-  public get = async (user: IUser) => {
+  public get = async (
+    query: IFetchItineary["query"],
+    user: IUser
+  ): Promise<IPaginationResponse<IItineary>> => {
     try {
-      const { _id: userId } = user;
+      const meta = getPaginationQuery<IItineary>(
+        PaginationqueryCodes.ITINEARARIES_PAGINATION,
+        { query: cloneDeep(query), body: cloneDeep(user) }
+      );
 
-      const itineararies = await this._model
-        .find({ userId }, { __v: 0 })
-        .lean();
+      const [itineararies, total] = await Promise.all([
+        this._model
+          .find(meta.query, meta.projection ?? {})
+          .sort(meta.sort)
+          .skip((meta.skip - 1) * meta.limit)
+          .limit(meta.limit)
+          .lean(),
+        this._model.countDocuments(meta.query),
+      ]);
 
-      return itineararies;
+      return {
+        meta: { total },
+        data: itineararies,
+      };
     } catch (error) {
       return this._handleError(error as Error);
     }

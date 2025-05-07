@@ -1,6 +1,7 @@
 import { Types } from "mongoose";
 
 export interface IItineary {
+  _id: Types.ObjectId;
   userId: Types.ObjectId;
   title: string;
   destination: string;
