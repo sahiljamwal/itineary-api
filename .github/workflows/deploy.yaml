@@ -28,6 +28,13 @@ jobs:
         with:
           workload_identity_provider: "projects/141134708680/locations/global/workloadIdentityPools/github-pool/providers/github-provider"
           service_account: ${{ secrets.GCP_SA_EMAIL }}
+          create_credentials_file: true
+          export_environment_variables: true
+          universe: googleapis.com
+          cleanup_credentials: true
+          access_token_lifetime: 3600s
+          access_token_scopes: https://www.googleapis.com/auth/cloud-platform
+          id_token_include_email: false
 
       - name: Configure Docker to use Artifact Registry
         run: |
