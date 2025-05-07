@@ -19,12 +19,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up Google Cloud SDK
-        uses: google-github-actions/setup-gcloud@v2
+      - name: Authenticate to Google Cloud via Workload Identity Federation
+        uses: google-github-actions/auth@v2
         with:
-          project_id: ${{ secrets.GCP_PROJECT_ID }}
-          service_account_key: ${{ secrets.GCP_SA_KEY }}
-          export_default_credentials: true
+          workload_identity_provider: "projects/141134708680/locations/global/workloadIdentityPools/github-pool/providers/github-provider"
+          service_account: ${{ secrets.GCP_SA_EMAIL }}
 
       - name: Configure Docker to use Artifact Registry
         run: |
@@ -43,5 +42,5 @@ jobs:
             --image="$IMAGE_NAME" \
             --region=${{ secrets.GCP_REGION }} \
             --platform-managed \
-            --allow-unauthenticated \ 
+            --allow-unauthenticated \
             --quiet
