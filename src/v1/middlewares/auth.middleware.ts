@@ -53,7 +53,7 @@ export const validateUser = async (
   try {
     const token = request.headers.authorization?.split(" ")[1];
     if (!token) {
-      throw new ValidationError(EC.AUTH_TOKEN_IS_REQUIRED);
+      throw new AuthenticationError(EC.AUTH_TOKEN_IS_REQUIRED);
     }
 
     const decoded = jwtUtil.verifyToken(token) as JwtPayload;

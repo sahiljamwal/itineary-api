@@ -1,4 +1,3 @@
-import { MongooseError } from "mongoose";
 import { EC } from "../../common/constants/errors";
 import { BaseError } from "../../common/errors/base.error";
 import {
@@ -10,6 +9,7 @@ import bcryptUtil from "../../common/utils/bcrypt.util";
 import jwtUtil from "../../common/utils/jwt.util";
 import UserModel from "../schema/users.schema";
 import { ILoginUserPayload, IRegisterUserPayload } from "../types/auth.type";
+import { IUser } from "../types/models/user.type";
 
 class AuthService {
   constructor(private _model = UserModel) {}
@@ -31,8 +31,10 @@ class AuthService {
         throw new ValidationError(EC.USER_ALREADY_REGISTERED);
       }
 
-      const { _id } = await this._model.create(payload);
-      return { ...payload, _id };
+      const newUser = await this._model.create(payload);
+      const { accessToken, expiresIn } = this._getAccessToken(newUser);
+
+      return { email, _id: newUser._id, accessToken, expiresIn };
     } catch (error) {
       return this._handleError(error as Error);
     }
@@ -47,14 +49,9 @@ class AuthService {
         throw new AuthenticationError(EC.INVALID_CREDENTIALS);
       }
 
-      const token = jwtUtil.generateToken({
-        userId: user._id.toString(),
-        name: user.name,
-        role: user.role,
-        email: user.email,
-      });
+      const { accessToken, expiresIn } = this._getAccessToken(user);
 
-      return { accessToken: token, expiresIn: 3600 };
+      return { accessToken, expiresIn };
     } catch (error) {
       return this._handleError(error as Error);
     }
@@ -66,6 +63,17 @@ class AuthService {
     } catch (error) {
       return this._handleError(error as Error);
     }
+  };
+
+  private _getAccessToken = (user: IUser) => {
+    const token = jwtUtil.generateToken({
+      userId: user._id.toString(),
+      name: user.name,
+      role: user.role,
+      email: user.email,
+    });
+
+    return { accessToken: token, expiresIn: 3600 };
   };
 }
 

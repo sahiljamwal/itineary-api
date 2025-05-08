@@ -130,6 +130,7 @@ You can use the following credentials to test the API:
 - `npm run dev`: Run the development server with hot-reload
 - `npm run build`: Build the TypeScript project
 - `npm run seed`: Seed the database with initial data
+- `npm test`: For running unit test cases
 
 ## License
 
