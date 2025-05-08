@@ -1,8 +1,10 @@
+import { MongooseError } from "mongoose";
 import { EC } from "../../common/constants/errors";
 import { BaseError } from "../../common/errors/base.error";
 import {
   AuthenticationError,
   SystemError,
+  ValidationError,
 } from "../../common/errors/custom.error";
 import bcryptUtil from "../../common/utils/bcrypt.util";
 import jwtUtil from "../../common/utils/jwt.util";
@@ -22,7 +24,15 @@ class AuthService {
 
   public registerUser = async (payload: IRegisterUserPayload) => {
     try {
-      return await this._model.create(payload);
+      const { email } = payload;
+      const user = await this._model.findOne({ email }).lean();
+
+      if (user) {
+        throw new ValidationError(EC.USER_ALREADY_REGISTERED);
+      }
+
+      const { _id } = await this._model.create(payload);
+      return { ...payload, _id };
     } catch (error) {
       return this._handleError(error as Error);
     }
@@ -44,7 +54,7 @@ class AuthService {
         email: user.email,
       });
 
-      return { accessToken: token };
+      return { accessToken: token, expiresIn: 3600 };
     } catch (error) {
       return this._handleError(error as Error);
     }

@@ -7,4 +7,6 @@ export const EC = {
   INVALID_USER: "Invalid user",
   UNSUPPORTED_PAGINATION_QUERY_CODE_PROVIDED:
     "Unsupported Pagination query code provided",
+  USER_ALREADY_REGISTERED:
+    "This email is already associated with another account",
 };

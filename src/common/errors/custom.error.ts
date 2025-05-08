@@ -27,6 +27,6 @@ export class AuthorizationError extends BaseError {
 
 export class SystemError extends BaseError {
   constructor(message: string, internalStatusCode: number = 500) {
-    super(ErrorName.AUTHORIZATION_ERROR, 500, message, internalStatusCode);
+    super(ErrorName.SYSTEM_ERROR, 500, message, internalStatusCode);
   }
 }

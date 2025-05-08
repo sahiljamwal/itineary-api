@@ -10,8 +10,8 @@ class AuthController {
     next: NextFunction
   ) => {
     try {
-      await this._service.registerUser(request.body);
-      return response.sendStatus(201);
+      const data = await this._service.registerUser(request.body);
+      return response.status(201).send(data);
     } catch (error) {
       return next(error);
     }
