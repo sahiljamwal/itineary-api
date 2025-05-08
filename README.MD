@@ -138,3 +138,9 @@ ISC
 ## Author
 
 sahiljamwal
+
+## Deployment Architecture
+
+![CI/CD Pipeline Architecture](public/ci-cd.png)
+
+The above diagram illustrates our CI/CD pipeline and deployment architecture, showing how code changes flow from development to production.
