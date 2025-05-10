@@ -27,7 +27,7 @@ COPY --from=build /app/package*.json ./
 COPY --from=build /app/dist ./dist
 
 # Install production dependencies
-RUN npm install --onit=dev
+RUN npm install --omit=dev
 
 # expose port 
 EXPOSE 3000
